@@ -16,10 +16,9 @@ BLOOMBERG_COL_MAP = {
 def load_bloomberg_csv(path: str | Path) -> pd.DataFrame:
     """
     Load a Bloomberg Excel/CSV export (daily OHLCV) and normalize columns.
-    Expected fields: PX_OPEN, PX_HIGH, PX_LOW, PX_LAST, PX_ADJ_CLOSE, VOLUME.
     """
     df = pd.read_csv(path)
-    # normalize headers
+    # rename headers
     cols = {c: BLOOMBERG_COL_MAP.get(c, c) for c in df.columns}
     df = df.rename(columns=cols)
 
@@ -41,8 +40,7 @@ def load_yfinance_prices(
     provider: str = "yfinance",
 ) -> pd.DataFrame:
     """
-    Temporary fallback for milestone progress.
-    Produces the same schema as load_bloomberg_csv so you can swap later.
+    Temporary fallback for when Bloomberg data unavailable (uses yfinance instead).
     """
     if provider != "yfinance":
         raise ValueError("Only yfinance fallback is implemented for now.")
