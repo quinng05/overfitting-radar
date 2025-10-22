@@ -4,6 +4,8 @@ from typing import Iterator, Tuple
 
 def expanding_time_splits(dates: pd.Series, n_splits: int = 5, min_train_days: int = 252) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
     uniq = np.array(pd.Index(dates).sort_values().unique())
+    if len(uniq) == 0 or len(uniq) <= min_train_days:
+        return
     if len(uniq) <= min_train_days + 1:
         yield np.where(dates <= uniq[min_train_days])[0], np.where(dates > uniq[min_train_days])[0]
         return

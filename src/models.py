@@ -25,10 +25,10 @@ def ridge_baseline(df: pd.DataFrame, alphas: Iterable[float] = (0.1, 1.0, 10.0))
             ("ridge",  Ridge(alpha=alpha))
         ])
         fold_rmse = []
-        for tr, te in expanding_time_splits(dates, n_splits=5, min_train_days=252):
+        for tr, te in expanding_time_splits(dates, n_splits=5, min_train_days=60):
             pipe.fit(X[tr], y[tr])
             pred = pipe.predict(X[te])
-            fold_rmse.append(mean_squared_error(y[te], pred, squared=False))
+            fold_rmse.append(mean_squared_error(y[te], pred) ** 0.5)
         rows.append({"model":"Ridge","alpha":alpha,
                      "rmse_mean":float(np.mean(fold_rmse)),"rmse_std":float(np.std(fold_rmse))})
     return pd.DataFrame(rows)
@@ -48,7 +48,7 @@ def logreg_baseline(df: pd.DataFrame, Cs: Iterable[float] = (1.0, 0.5, 0.1), cal
                 return base.fit(Xtr, ytr)
             return CalibratedClassifierCV(base, method="sigmoid", cv=3).fit(Xtr, ytr)  # calibrate on train only
         accs, aucs, losses = [], [], []
-        for tr, te in expanding_time_splits(dates, n_splits=5, min_train_days=252):
+        for tr, te in expanding_time_splits(dates, n_splits=5, min_train_days=60):
             m = fit_model(X[tr], y[tr])
             prob = m.predict_proba(X[te])[:,1]
             pred = (prob >= 0.5).astype(int)  # threshold tuning optional (on train/val)

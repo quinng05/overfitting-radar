@@ -54,6 +54,9 @@ def load_yfinance_prices(
         data = yf.download(t, start=start, end=end, progress=False, auto_adjust=False)
         if data.empty:
             continue
+        # Flatten MultiIndex columns to simple names
+        if isinstance(data.columns, pd.MultiIndex):
+            data.columns = [col[0] for col in data.columns]
         data = data.rename(
             columns={
                 "Open":"open","High":"high","Low":"low",
