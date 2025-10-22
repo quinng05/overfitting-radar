@@ -9,6 +9,5 @@ time-series CV, and save baseline metrics to `data/processed/baseline_cv_scores.
 
 **Run baseline pipeline**
 ```
-python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python3 -m src.run
