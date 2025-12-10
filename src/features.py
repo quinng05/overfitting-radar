@@ -64,10 +64,43 @@ def add_rsi(df: pd.DataFrame, window: int = 5) -> pd.DataFrame:
     out[f"rsi{window}"] = 100 - (100 / (1 + rs))
     return out
 
+def add_rolling_stats(
+    df: pd.DataFrame,
+    windows: tuple[int, ...] = (20, 60),
+) -> pd.DataFrame:
+    """
+    Rolling-window summaries of short-horizon returns.
+
+    Mirrors the style of add_realized_vtlty/add_rsi:
+    - group by ticker
+    - rolling(window).mean()/std
+    """
+    out = df.sort_values(["ticker", "date"]).copy()
+    out = _ensure_unique_cols(out)
+
+    g = out.groupby("ticker")
+    for w in windows:
+        out[f"ret1_mean_{w}"] = (
+            g["ret1"]
+            .rolling(w)
+            .mean()
+            .reset_index(level=0, drop=True)
+        )
+        out[f"ret1_std_{w}"] = (
+            g["ret1"]
+            .rolling(w)
+            .std()
+            .reset_index(level=0, drop=True)
+        )
+
+    return out
+
 def build_feature_table(df: pd.DataFrame) -> pd.DataFrame:
     x = _ensure_unique_cols(df)
     x = add_basic_returns(x)
     x = add_realized_vtlty(x, window=10)
     x = add_rsi(x, window=5)
+    x = add_rolling_stats(x, windows=(20, 60))
     x = x.dropna().reset_index(drop=True)
     return x
+
