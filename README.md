@@ -1,7 +1,7 @@
 ## Installation, Setup, and Execution
 
 ### Prerequisites
-- Python **3.10 or 3.11**
+- Python **3.11**
 - `git`
 - Internet access (required on first run for `yfinance` to download historical prices)
 
@@ -21,7 +21,7 @@ source .venv/bin/activate          # Windows PowerShell: .venv\Scripts\Activate.
 ```bash
 pip install -r requirements.txt
 ```
-This installs: numpy, pandas, scikit-learn>=1.3, matplotlib, yfinance, joblib, tqdm.
+This installs: numpy, pandas, scikit-learn>=1.3, matplotlib.
 
 ### 4. Run the Full Pipeline
 ```bash
